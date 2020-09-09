@@ -1,0 +1,18 @@
+{
+  "name": "sunstake-contracts",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/SunStake/contracts",
+  "author": "SunStake <sunstake@protonmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "ethereum-waffle": "^3.1.0",
+    "rimraf": "^3.0.2",
+    "solc": "0.5.12"
+  },
+  "scripts": {
+    "clean": "rimraf ./build/",
+    "prebuild": "yarn clean",
+    "build": "waffle"
+  }
+}
