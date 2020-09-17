@@ -4,7 +4,7 @@ This repository contains the source code for all smart contracts that make up th
 
 ## Contract Addesses
 
-Whenever a new contract is deployed to Tron mainnet, this section will be uppdated with the corresponding contract addresses.
+Whenever a new contract is deployed to Tron mainnet, this section will be updated with the corresponding contract addresses.
 
 ## Building
 
