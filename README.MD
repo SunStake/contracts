@@ -10,7 +10,7 @@ Contracts deployed to mainnet to date:
 
 | Contract Name | Address                                                                                                  |
 | ------------- | -------------------------------------------------------------------------------------------------------- |
-| SskToken      | [TVcMFEM7RHNsbppQEhAyGmE2RepGmbMCQ2](https://tronscan.org/#/contract/TVcMFEM7RHNsbppQEhAyGmE2RepGmbMCQ2) |
+| SskToken      | [TW1sqqq7UphAqGNHDXSLXsEainYHJuQeyC](https://tronscan.org/#/contract/TW1sqqq7UphAqGNHDXSLXsEainYHJuQeyC) |
 
 ## Building
 
