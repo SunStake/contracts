@@ -58,4 +58,8 @@ contract TRC20Detailed is ITRC20 {
     function decimals() public view returns (uint8) {
         return _decimals;
     }
+
+    function _setName(string memory newName) internal {
+        _name = newName;
+    }
 }

@@ -96,4 +96,12 @@ contract SskToken is
         _mint(account, amount);
         return true;
     }
+
+    /**
+     * @dev Changes token contract name. This function is added to combat Tronscan
+     * token name censorship.
+     */
+    function setName(string memory newName) public onlyOwner {
+        _setName(newName);
+    }
 }
