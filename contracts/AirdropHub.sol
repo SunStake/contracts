@@ -65,7 +65,7 @@ contract AirdropHub is Ownable {
         uint256 airdropAmount,
         uint256 snapshotTime,
         uint256 referralRate
-    ) external onlyOwner {
+    ) external onlyOwner returns (address) {
         require(airdropAmount > 0, "AirdropHub: zero amount");
         require(snapshotTime > block.timestamp, "AirdropHub: time in the past");
 
@@ -88,6 +88,8 @@ contract AirdropHub is Ownable {
         airdropMap[address(newAirdrop)] = true;
 
         emit NewAirdrop(address(newAirdrop));
+
+        return address(newAirdrop);
     }
 
     /**
