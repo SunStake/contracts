@@ -329,6 +329,11 @@ contract Airdrop {
                         );
 
                         emit ReferralReward(referrer, staker, referralReward);
+
+                        IAirdropHub(hub).addReferralReward(
+                            referrer,
+                            referralReward
+                        );
                     }
                 }
             }

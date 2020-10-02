@@ -21,6 +21,12 @@ contract AirdropHub is Ownable {
     mapping(address => bool) public airdropMap;
     mapping(address => address) public referrersByReferred;
 
+    // On-chain statistics (can be replaced by off-chain data processing)
+    uint256 totalReferralCount;
+    uint256 totalReferralReward;
+    mapping(address => uint256) public referralCountsByReferrer;
+    mapping(address => uint256) public referralRewardsByReferrer;
+
     /**
      * @dev Functions annotated by this modifier can only be called by airdrop
      * contracts created from this hub. These callers are considered trusted.
@@ -101,9 +107,29 @@ contract AirdropHub is Ownable {
         if (referrersByReferred[referred] != address(0)) return false;
 
         referrersByReferred[referred] = referrer;
+
+        // No need for safe math. It's just stats. Better off saving tx cost
+        totalReferralCount = totalReferralCount + 1;
+        referralCountsByReferrer[referrer] =
+            referralCountsByReferrer[referrer] +
+            1;
+
         emit Referral(referrer, referred);
 
         return true;
+    }
+
+    /**
+     * @dev This function is only use for statistics. No safe math needed
+     */
+    function addReferralReward(address referrer, uint256 amount)
+        external
+        onlyAirdrop
+    {
+        totalReferralReward = totalReferralReward + amount;
+        referralRewardsByReferrer[referrer] =
+            referralRewardsByReferrer[referrer] +
+            amount;
     }
 
     /**

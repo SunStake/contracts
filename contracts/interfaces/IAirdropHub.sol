@@ -16,5 +16,7 @@ interface IAirdropHub {
         external
         returns (bool);
 
+    function addReferralReward(address referrer, uint256 amount) external;
+
     function transferFrom(address from, uint256 amount) external;
 }
