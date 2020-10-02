@@ -1,0 +1,138 @@
+pragma solidity =0.5.12;
+
+import "./Airdrop.sol";
+import "./interfaces/ITRC20.sol";
+import "./ownership/Ownable.sol";
+
+/**
+ * @dev This contract serves as a central repository for maintaining the list
+ * of airdrops and referral relationships. It also acts as a token spending proxy
+ * such that users only need to make approval once, and are then able to participate
+ * in multiple airdrops.
+ */
+contract AirdropHub is Ownable {
+    address public stakeToken;
+    address public airdropToken;
+    uint256 public airdropCount;
+    address[] public airdrops;
+    mapping(address => bool) public airdropMap;
+    mapping(address => address) public referrersByReferred;
+
+    /**
+     * @dev Functions annotated by this modifier can only be called by airdrop
+     * contracts created from this hub. These callers are considered trusted.
+     */
+    modifier onlyAirdrop() {
+        require(airdropMap[msg.sender], "AirdropHub: not airdrop");
+        _;
+    }
+
+    constructor(address _stakeToken, address _airdropToken) public {
+        require(
+            _stakeToken != address(0) && _airdropToken != address(0),
+            "Airdrop: zero address"
+        );
+
+        stakeToken = _stakeToken;
+        airdropToken = _airdropToken;
+    }
+
+    /**
+     * @dev We're marking the fallback function as payable so that we can test it with
+     * tools from Ethereum. Doing this does NOT make it easier to send funds by mistake.
+     *
+     * On Tron, simple TRX transfers do not trigger contract code, as opposed to Ethereum
+     * where the fallback function is invoked. So making the fallback function non-payable
+     * won't stop users from accidentally sending TRX. It's necessary to mark the fallback
+     * payable to mock this behavior on Ethereum.
+     */
+    function() external payable {}
+
+    /**
+     * @dev Create a new airdrop contract. `amount` of airdropToken will be transferred
+     * from owner to the newly-created airdrop contract.
+     */
+    function createAirdrop(
+        uint256 airdropAmount,
+        uint256 snapshotTime,
+        uint256 referralRate
+    ) external onlyOwner {
+        require(airdropAmount > 0, "AirdropHub: zero amount");
+        require(snapshotTime > block.timestamp, "AirdropHub: time in the past");
+
+        Airdrop newAirdrop = new Airdrop(
+            airdropAmount,
+            snapshotTime,
+            referralRate
+        );
+
+        ITRC20(airdropToken).transferFrom(
+            msg.sender,
+            address(newAirdrop),
+            airdropAmount
+        );
+
+        newAirdrop.initialize();
+
+        airdropCount = airdropCount + 1; // No need for safe math
+        airdrops.push(address(newAirdrop));
+        airdropMap[address(newAirdrop)] = true;
+    }
+
+    /**
+     * @dev Register referral relationship. This function is only callable from airdrop
+     * contracts generated through this hub (`onlyAirdrop`).
+     * @return bool Whether the referral relationship is successfully established.
+     */
+    function registerReferral(address referrer, address referred)
+        external
+        onlyAirdrop
+        returns (bool)
+    {
+        // Cannot refer self
+        if (referrer == referred) return false;
+
+        // Cannot overwrite existing referrals
+        if (referrersByReferred[referred] != address(0)) return false;
+
+        referrersByReferred[referred] = referrer;
+        return true;
+    }
+
+    /**
+     * @dev Transfer stakeToken from users to an airdrop contract. This function is only
+     * callable from airdrop contracts generated through this hub (`onlyAirdrop`). The hub
+     * acts as an approval proxy here.
+     */
+    function transferFrom(address from, uint256 amount) external onlyAirdrop {
+        require(amount > 0, "AirdropHub: zero amount");
+        require(
+            ITRC20(stakeToken).transferFrom(from, msg.sender, amount),
+            "AirdropHub: TRC20 trnasfer failed"
+        );
+    }
+
+    /**
+     * @dev This function is for withdrawing TRX from the contract in case someone
+     * accidentally sends TRX to the address.
+     *
+     * When this happens the team will withdraw TRX and return to the original sender.
+     */
+    function withdrawTrx(uint256 amount) external onlyOwner {
+        msg.sender.transfer(amount);
+    }
+
+    /**
+     * @dev This function is for withdrawing any TRC20 tokens from the contract in case
+     * someone accidentally sends tokens to this contract.
+     *
+     * When this happens the team will withdraw the tokens and return to the original sender.
+     *
+     * Note that this hub contract is NOT directly involved in the staking process. Staked tokens
+     * are NOT stored here. Therefore it's perfectly safe to have this emergency withdrawal
+     * function in place. No user funds are at risk because of this.
+     */
+    function withdrawTrc20(address token, uint256 amount) external onlyOwner {
+        ITRC20(token).transfer(msg.sender, amount);
+    }
+}
