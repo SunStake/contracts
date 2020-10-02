@@ -11,6 +11,9 @@ import "./ownership/Ownable.sol";
  * in multiple airdrops.
  */
 contract AirdropHub is Ownable {
+    event NewAirdrop(address indexed airdropAddress);
+    event Referral(address indexed referrer, address indexed referred);
+
     address public stakeToken;
     address public airdropToken;
     uint256 public airdropCount;
@@ -77,6 +80,8 @@ contract AirdropHub is Ownable {
         airdropCount = airdropCount + 1; // No need for safe math
         airdrops.push(address(newAirdrop));
         airdropMap[address(newAirdrop)] = true;
+
+        emit NewAirdrop(address(newAirdrop));
     }
 
     /**
@@ -96,6 +101,8 @@ contract AirdropHub is Ownable {
         if (referrersByReferred[referred] != address(0)) return false;
 
         referrersByReferred[referred] = referrer;
+        emit Referral(referrer, referred);
+
         return true;
     }
 

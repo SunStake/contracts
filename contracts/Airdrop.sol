@@ -8,6 +8,15 @@ import "./libraries/SafeMath.sol";
 contract Airdrop {
     using SafeMath for uint256;
 
+    event Staked(address indexed staker, uint256 indexed amount);
+    event Unstaked(address indexed staker, uint256 indexed amount);
+    event AirdropReward(address indexed staker, uint256 indexed amount);
+    event ReferralReward(
+        address indexed referrer,
+        address indexed referred,
+        uint256 indexed amount
+    );
+
     address public hub;
     address public stakeToken;
     address public airdropToken;
@@ -242,6 +251,8 @@ contract Airdrop {
         // Transfer stakeToken and build referral
         IAirdropHub(hub).transferFrom(staker, amount);
         IAirdropHub(hub).registerReferral(referrer, staker);
+
+        emit Staked(staker, amount);
     }
 
     function _unstake(
@@ -269,6 +280,8 @@ contract Airdrop {
             "Airdrop: TRC20 trnasfer failed"
         );
 
+        emit Unstaked(staker, amount);
+
         // Settle the airdrop reward
         if (withReward && block.timestamp >= snapshotTime) {
             // It should only be possible to unstake all after snapshot time
@@ -294,6 +307,8 @@ contract Airdrop {
                     "Airdrop: TRC20 trnasfer failed"
                 );
 
+                emit AirdropReward(staker, airdropReward);
+
                 // Settle referral reward
                 address referrer = IAirdropHub(hub).referrersByReferred(staker);
                 if (referrer != address(0)) {
@@ -312,6 +327,8 @@ contract Airdrop {
                             ),
                             "Airdrop: TRC20 trnasfer failed"
                         );
+
+                        emit ReferralReward(referrer, staker, referralReward);
                     }
                 }
             }
