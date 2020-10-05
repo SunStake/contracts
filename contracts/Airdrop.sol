@@ -303,7 +303,6 @@ contract Airdrop {
 
             uint256 airdropReward = userStakedAmountBefore
                 .mul(airdropAmount)
-                .mul(snapshotedStakedAmount)
                 .div(snapshotedStakeTokenSupply);
 
             // It's possible that reward is zero if the staked amount is too small
