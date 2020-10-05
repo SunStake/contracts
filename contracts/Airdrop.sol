@@ -227,14 +227,14 @@ contract Airdrop {
     }
 
     /**
-     * @dev This function is used for burning airdrop tokens left. For this to work, stakeToken
+     * @dev This function is used for burning airdrop tokens left. For this to work, airdropToken
      * must implement ITRC20Burnable.
      */
     function burn() external onlyOwner onlyInitialized onlyEnded onlyNoStaker {
         require(!remainingBurnt, "Airdrop: already burnt");
 
         remainingBurnt = true;
-        ITRC20Burnable(stakeToken).burn(
+        ITRC20Burnable(airdropToken).burn(
             airdropAmount.sub(accuAirdropReward).sub(accuReferralReward)
         );
     }
