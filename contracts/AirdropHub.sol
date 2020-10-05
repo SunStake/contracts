@@ -1,6 +1,7 @@
 pragma solidity =0.5.12;
 
 import "./Airdrop.sol";
+import "./interfaces/IAirdrop.sol";
 import "./interfaces/ITRC20.sol";
 import "./ownership/Ownable.sol";
 
@@ -90,6 +91,25 @@ contract AirdropHub is Ownable {
         emit NewAirdrop(address(newAirdrop));
 
         return address(newAirdrop);
+    }
+
+    /**
+     * @dev Unstake all tokens from a specific airdrop. This has the exact same effect
+     * as calling `unstake()` on the airdrop contract directly.
+     *
+     * This function is actually pointless, as calling it is literally the same as invoking
+     * `unstake()` on the airdrop contract. The only reason it's put here is due to a bug
+     * currently on Tronscan, which causes the contract react/write functionalities for
+     * contract-generated contraces to not display properly.
+     *
+     * Of course, calling contract functions can be dong without using a user interface.
+     * However, many non-technical users rely on the availability of this Tronscan UI. It is
+     * thus put here to provide an emergency exit for non-technical users should the SunStake
+     * UI becomes unavailable for any reason.
+     */
+    function unstake(address airdrop) external {
+        require(airdropMap[airdrop], "AirdropHub: not airdrop");
+        IAirdrop(airdrop).unstakeFromHub(msg.sender);
     }
 
     /**

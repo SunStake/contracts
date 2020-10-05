@@ -186,6 +186,13 @@ contract Airdrop {
     }
 
     /**
+     * @dev Unstake all staked tokens. See `unstake()` on AirdropHub for details.
+     */
+    function unstakeFromHub(address staker) external onlyInitialized onlyHub {
+        _unstake(staker, stakedAmounts[staker], true);
+    }
+
+    /**
      * @dev This function is for withdrawing TRX from the contract in case someone
      * accidentally sends TRX to the address. In Ethereum we can mostly avoid this
      * making the contract non-payable, but that doesn't work in Tron as a normal
