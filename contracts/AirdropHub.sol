@@ -23,8 +23,8 @@ contract AirdropHub is Ownable {
     mapping(address => address) public referrersByReferred;
 
     // On-chain statistics (can be replaced by off-chain data processing)
-    uint256 totalReferralCount;
-    uint256 totalReferralReward;
+    uint256 public totalReferralCount;
+    uint256 public totalReferralReward;
     mapping(address => uint256) public referralCountsByReferrer;
     mapping(address => uint256) public referralRewardsByReferrer;
 
