@@ -310,7 +310,7 @@ contract Airdrop {
             if (airdropReward > 0) {
                 accuAirdropReward = accuAirdropReward.add(airdropReward);
                 require(
-                    ITRC20(airdropToken).transfer(staker, accuAirdropReward),
+                    ITRC20(airdropToken).transfer(staker, airdropReward),
                     "Airdrop: TRC20 trnasfer failed"
                 );
 
