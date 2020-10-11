@@ -194,6 +194,20 @@ contract Airdrop {
     }
 
     /**
+     * @dev This function can be called by anyone after snapshot time is reached. Presumably
+     * it doesn't need to be called at all as a snapshot will be automatically taken when anyone
+     * unstakes after snapshot time. It's put here just in case no one unstakes (which is unlikely).
+     */
+    function takeSnapshot() external onlyInitialized onlyEnded {
+        require(!snapshotTaken, "Airdrop: snapshot taken");
+
+        snapshotTaken = true;
+        snapshotedStakerCount = currentStakerCount;
+        snapshotedStakedAmount = totalStakedAmount;
+        snapshotedStakeTokenSupply = ITRC20(stakeToken).totalSupply();
+    }
+
+    /**
      * @dev This function is for withdrawing TRX from the contract in case someone
      * accidentally sends TRX to the address. In Ethereum we can mostly avoid this
      * making the contract non-payable, but that doesn't work in Tron as a normal
