@@ -31,6 +31,7 @@ contract Airdrop {
     mapping(address => uint256) public stakedAmounts;
 
     bool public snapshotTaken;
+    uint256 public snapshotedStakerCount;
     uint256 public snapshotedStakedAmount;
     uint256 public snapshotedStakeTokenSupply;
 
@@ -297,6 +298,7 @@ contract Airdrop {
             // Take snapshot first if not already taken
             if (!snapshotTaken) {
                 snapshotTaken = true;
+                snapshotedStakerCount = currentStakerCount.add(1);
                 snapshotedStakedAmount = totalStakedAmountBefore;
                 snapshotedStakeTokenSupply = ITRC20(stakeToken).totalSupply();
             }
