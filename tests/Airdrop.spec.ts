@@ -72,7 +72,8 @@ describe("Airdrop", () => {
       await airdropHub.createAirdrop(
         expandTo18Decimals(50_000),
         Math.floor(new Date(2020, 0, 2).getTime() / 1000),
-        20_00
+        20_00,
+        100_00
       )
     ).wait();
     const newAirdropEvent = newAirdropTx.events.find(

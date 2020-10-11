@@ -65,7 +65,8 @@ contract AirdropHub is Ownable {
     function createAirdrop(
         uint256 airdropAmount,
         uint256 snapshotTime,
-        uint256 referralRate
+        uint256 referralRate,
+        uint256 rewardMultiplier
     ) external onlyOwner returns (address) {
         require(airdropAmount > 0, "AirdropHub: zero amount");
         require(snapshotTime > block.timestamp, "AirdropHub: time in the past");
@@ -73,7 +74,8 @@ contract AirdropHub is Ownable {
         Airdrop newAirdrop = new Airdrop(
             airdropAmount,
             snapshotTime,
-            referralRate
+            referralRate,
+            rewardMultiplier
         );
 
         ITRC20(airdropToken).transferFrom(

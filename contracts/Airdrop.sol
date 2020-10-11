@@ -23,6 +23,7 @@ contract Airdrop {
     uint256 public airdropAmount;
     uint256 public snapshotTime;
     uint256 public referralRate;
+    uint256 public rewardMultiplier;
 
     bool public initialized;
     bool public remainingBurnt;
@@ -40,6 +41,7 @@ contract Airdrop {
 
     uint256 public constant PERCENTAGE_100 = 10000;
     uint256 public constant MAX_REFERRAL_RATE = 10000; // Hard-coded upper limit for referral rate: 100%
+    uint256 public constant MAX_REWARD_MULTIPLIER = 100000; // Hard-coded upper limit for reward multiplier: 1000%
 
     modifier onlyHub() {
         require(msg.sender == hub, "Airdrop: not hub");
@@ -74,7 +76,8 @@ contract Airdrop {
     constructor(
         uint256 _airdropAmount,
         uint256 _snapshotTime,
-        uint256 _referralRate
+        uint256 _referralRate,
+        uint256 _rewardMultiplier
     ) public {
         require(_airdropAmount > 0, "Airdrop: zero amount");
         require(
@@ -85,6 +88,10 @@ contract Airdrop {
             _referralRate <= MAX_REFERRAL_RATE,
             "Airdrop: referral rate out of range"
         );
+        require(
+            _rewardMultiplier <= MAX_REWARD_MULTIPLIER,
+            "Airdrop: reward multiplier out of range"
+        );
 
         hub = msg.sender;
         stakeToken = IAirdropHub(msg.sender).stakeToken();
@@ -92,6 +99,7 @@ contract Airdrop {
         airdropAmount = _airdropAmount;
         snapshotTime = _snapshotTime;
         referralRate = _referralRate;
+        rewardMultiplier = _rewardMultiplier;
     }
 
     /**
@@ -158,7 +166,7 @@ contract Airdrop {
     /**
      * @dev Unstake all staked tokens, but without getting airdrop rewards.
      *
-     * This is en emergency exit for getting the staked tokens backed just in case there's
+     * This is en emergency exit for getting the staked tokens back just in case there's
      * something wrong with the reward calculation. There shouldn't be any but we're putting
      * it here just to be safe.
      *
@@ -319,7 +327,9 @@ contract Airdrop {
 
             uint256 airdropReward = userStakedAmountBefore
                 .mul(airdropAmount)
-                .div(snapshotedStakeTokenSupply);
+                .mul(rewardMultiplier)
+                .div(snapshotedStakeTokenSupply)
+                .div(PERCENTAGE_100);
 
             // It's possible that reward is zero if the staked amount is too small
             if (airdropReward > 0) {
