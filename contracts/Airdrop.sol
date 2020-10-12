@@ -278,9 +278,12 @@ contract Airdrop {
             currentStakerCount = currentStakerCount.add(1);
         }
 
-        // Transfer stakeToken and build referral
+        // Transfer stakeToken
         IAirdropHub(hub).transferFrom(staker, amount);
-        IAirdropHub(hub).registerReferral(referrer, staker);
+
+        // Build referral if referrer is not empty
+        if (referrer != address(0))
+            IAirdropHub(hub).registerReferral(referrer, staker);
 
         emit Staked(staker, amount);
     }

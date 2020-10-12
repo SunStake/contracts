@@ -125,6 +125,7 @@ contract AirdropHub is Ownable {
         returns (bool)
     {
         // Cannot refer self
+        if (referred == address(0)) return false;
         if (referrer == referred) return false;
 
         // Cannot overwrite existing referrals
