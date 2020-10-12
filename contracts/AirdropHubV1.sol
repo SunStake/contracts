@@ -1,7 +1,7 @@
 pragma solidity =0.5.12;
 
-import "./Airdrop.sol";
-import "./interfaces/IAirdrop.sol";
+import "./AirdropV1.sol";
+import "./interfaces/IAirdropV1.sol";
 import "./interfaces/ITRC20.sol";
 import "./ownership/Ownable.sol";
 
@@ -11,7 +11,7 @@ import "./ownership/Ownable.sol";
  * such that users only need to make approval once, and are then able to participate
  * in multiple airdrops.
  */
-contract AirdropHub is Ownable {
+contract AirdropHubV1 is Ownable {
     event NewAirdrop(address indexed airdropAddress);
     event Referral(address indexed referrer, address indexed referred);
 
@@ -71,7 +71,7 @@ contract AirdropHub is Ownable {
         require(airdropAmount > 0, "AirdropHub: zero amount");
         require(snapshotTime > block.timestamp, "AirdropHub: time in the past");
 
-        Airdrop newAirdrop = new Airdrop(
+        AirdropV1 newAirdrop = new AirdropV1(
             airdropAmount,
             snapshotTime,
             referralRate,
@@ -111,7 +111,7 @@ contract AirdropHub is Ownable {
      */
     function unstake(address airdrop) external {
         require(airdropMap[airdrop], "AirdropHub: not airdrop");
-        IAirdrop(airdrop).unstakeFromHub(msg.sender);
+        IAirdropV1(airdrop).unstakeFromHub(msg.sender);
     }
 
     /**

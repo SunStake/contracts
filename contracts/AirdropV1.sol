@@ -1,11 +1,11 @@
 pragma solidity =0.5.12;
 
-import "./interfaces/IAirdropHub.sol";
+import "./interfaces/IAirdropHubV1.sol";
 import "./interfaces/ITRC20.sol";
 import "./interfaces/ITRC20Burnable.sol";
 import "./libraries/SafeMath.sol";
 
-contract Airdrop {
+contract AirdropV1 {
     using SafeMath for uint256;
 
     event Staked(address indexed staker, uint256 indexed amount);
@@ -49,7 +49,7 @@ contract Airdrop {
     }
 
     modifier onlyOwner() {
-        require(msg.sender == IAirdropHub(hub).owner(), "Airdrop: not owner");
+        require(msg.sender == IAirdropHubV1(hub).owner(), "Airdrop: not owner");
         _;
     }
 
@@ -94,8 +94,8 @@ contract Airdrop {
         );
 
         hub = msg.sender;
-        stakeToken = IAirdropHub(msg.sender).stakeToken();
-        airdropToken = IAirdropHub(msg.sender).airdropToken();
+        stakeToken = IAirdropHubV1(msg.sender).stakeToken();
+        airdropToken = IAirdropHubV1(msg.sender).airdropToken();
         airdropAmount = _airdropAmount;
         snapshotTime = _snapshotTime;
         referralRate = _referralRate;
@@ -279,11 +279,11 @@ contract Airdrop {
         }
 
         // Transfer stakeToken
-        IAirdropHub(hub).transferFrom(staker, amount);
+        IAirdropHubV1(hub).transferFrom(staker, amount);
 
         // Build referral if referrer is not empty
         if (referrer != address(0))
-            IAirdropHub(hub).registerReferral(referrer, staker);
+            IAirdropHubV1(hub).registerReferral(referrer, staker);
 
         emit Staked(staker, amount);
     }
@@ -345,7 +345,7 @@ contract Airdrop {
                 emit AirdropReward(staker, airdropReward);
 
                 // Settle referral reward
-                address referrer = IAirdropHub(hub).referrersByReferred(staker);
+                address referrer = IAirdropHubV1(hub).referrersByReferred(staker);
                 if (referrer != address(0)) {
                     uint256 referralReward = airdropReward
                         .mul(referralRate)
@@ -365,7 +365,7 @@ contract Airdrop {
 
                         emit ReferralReward(referrer, staker, referralReward);
 
-                        IAirdropHub(hub).addReferralReward(
+                        IAirdropHubV1(hub).addReferralReward(
                             referrer,
                             referralReward
                         );

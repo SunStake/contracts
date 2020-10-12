@@ -12,8 +12,8 @@ import {
 
 import AnyToken from "../build/AnyToken.json";
 import SskToken from "../build/SskToken.json";
-import AirdropHub from "../build/AirdropHub.json";
-import Airdrop from "../build/Airdrop.json";
+import AirdropHub from "../build/AirdropHubV1.json";
+import Airdrop from "../build/AirdropV1.json";
 
 use(solidity);
 
