@@ -11,6 +11,7 @@ Contracts deployed to mainnet to date:
 | Contract Name | Address                                                                                                  |
 | ------------- | -------------------------------------------------------------------------------------------------------- |
 | SskToken      | [TW1sqqq7UphAqGNHDXSLXsEainYHJuQeyC](https://tronscan.org/#/contract/TW1sqqq7UphAqGNHDXSLXsEainYHJuQeyC) |
+| AirdropHubV1  | [TDgmBwBf7iFkj53dyK35U6U2Y4dsGXzj4T](https://tronscan.org/#/contract/TDgmBwBf7iFkj53dyK35U6U2Y4dsGXzj4T) |
 
 ## Building
 
