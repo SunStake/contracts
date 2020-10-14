@@ -29,8 +29,12 @@ contract Query {
          * 04 -> Current staker count
          * 05 -> Current staked amount
          * 06 -> User staked amount
+         * 07 -> Snapshot taken
+         * 08 -> Snapshot staker count
+         * 09 -> Snapshot staked amount
+         * 10 -> Snapshot stake token supply
          */
-        uint256[] memory result = new uint256[](7);
+        uint256[] memory result = new uint256[](11);
 
         address stakeToken = IAirdropV1(airdrop).stakeToken();
         address airdropToken = IAirdropV1(airdrop).airdropToken();
@@ -42,6 +46,10 @@ contract Query {
         result[4] = IAirdropV1(airdrop).currentStakerCount();
         result[5] = IAirdropV1(airdrop).totalStakedAmount();
         result[6] = IAirdropV1(airdrop).stakedAmounts(user);
+        result[7] = IAirdropV1(airdrop).snapshotTaken() ? 1 : 0;
+        result[8] = IAirdropV1(airdrop).snapshotedStakerCount();
+        result[9] = IAirdropV1(airdrop).snapshotedStakedAmount();
+        result[10] = IAirdropV1(airdrop).snapshotedStakeTokenSupply();
 
         return result;
     }
