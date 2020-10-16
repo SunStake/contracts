@@ -2,6 +2,11 @@ pragma solidity =0.5.12;
 
 import "./ownership/Ownable.sol";
 
+/**
+ * @dev This contract keeps track of latest prices of all relevant currencies
+ * of the system. Prices are initially fed by an oracle run by the SunStake team,
+ * and will transition to a decentralized oracle solution at a later time.
+ */
 contract ExchangeRates is Ownable {
     event OracleUpdated(address indexed from, address indexed to);
     event RatesUpdated(
