@@ -19,6 +19,8 @@ contract ExchangeRates is Ownable {
     mapping(bytes32 => RateAtTime) public rates;
 
     uint256 private constant MAX_UPDATE_CURRENCY_COUNT = 256;
+    uint256 private constant RATE_UPDATE_TX_EXPIRATION = 10 minutes;
+    uint256 private constant RATE_UPDATE_TX_FUTURE_LIMIT = 2 minutes;
 
     modifier onlyOracle() {
         require(msg.sender == oracle, "ExchangeRates: not oracle");
@@ -60,6 +62,14 @@ contract ExchangeRates is Ownable {
         require(
             currencyKeys.length > MAX_UPDATE_CURRENCY_COUNT,
             "ExchangeRates: length too large"
+        );
+        require(
+            block.timestamp < timeSent + RATE_UPDATE_TX_EXPIRATION,
+            "ExchangeRates: tx expired"
+        );
+        require(
+            timeSent < block.timestamp + RATE_UPDATE_TX_FUTURE_LIMIT,
+            "ExchangeRates: tx too far into future"
         );
 
         // Since the contract ignores stale rates, external observers need a way
