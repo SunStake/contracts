@@ -65,7 +65,7 @@ contract ExchangeRates is Ownable {
             "ExchangeRates: length mismatch"
         );
         require(
-            currencyKeys.length > MAX_UPDATE_CURRENCY_COUNT,
+            currencyKeys.length <= MAX_UPDATE_CURRENCY_COUNT,
             "ExchangeRates: length too large"
         );
         require(
