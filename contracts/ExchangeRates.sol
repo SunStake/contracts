@@ -27,6 +27,8 @@ contract ExchangeRates is Ownable {
     uint256 private constant RATE_UPDATE_TX_EXPIRATION = 10 minutes;
     uint256 private constant RATE_UPDATE_TX_FUTURE_LIMIT = 2 minutes;
 
+    bytes32 private constant CURRENCY_KEY_SUSD = "sUSD";
+
     modifier onlyOracle() {
         require(msg.sender == oracle, "ExchangeRates: not oracle");
         _;
@@ -84,6 +86,11 @@ contract ExchangeRates is Ownable {
         for (uint256 ind = 0; ind < currencyKeys.length; ind++) {
             bytes32 currentCurrency = currencyKeys[ind];
             RateAtTime memory existingRecord = rates[currentCurrency];
+
+            require(
+                currentCurrency != CURRENCY_KEY_SUSD,
+                "ExchangeRates: cannot set sUSD rate"
+            );
 
             // Ignore if the incoming rate is even older
             if (timeSent < existingRecord.time) {
