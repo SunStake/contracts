@@ -48,6 +48,18 @@ contract ExchangeRates is Ownable {
 
         oracle = _oracle;
         emit OracleUpdated(address(0), oracle);
+
+        // Set sUSD rate to 1. No update to sUSD rate is allowed
+        rates[CURRENCY_KEY_SUSD] = RateAtTime({
+            rate: uint216(10**18),
+            time: uint40(block.timestamp)
+        });
+        bytes32[] memory initUpdateKeys = new bytes32[](1);
+        uint256[] memory initUpdateRates = new uint256[](1);
+
+        initUpdateKeys[0] = CURRENCY_KEY_SUSD;
+        initUpdateRates[0] = 10**18;
+        emit RatesUpdated(initUpdateKeys, initUpdateRates, 1);
     }
 
     function setOracle(address _oracle) external onlyOwner {
