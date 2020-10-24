@@ -86,4 +86,54 @@ describe("Airdrop", () => {
         )
     ).to.revertedWith("ExchangeRates: cannot set sUSD rate");
   });
+
+  it("normal rate update", async () => {
+    // Rate is 0 before any update
+    expect(
+      (
+        await exchangeRates.getRateAndTime(
+          ethers.utils.formatBytes32String("sBTC")
+        )
+      ).rate
+    ).to.equal(0);
+
+    // sBTC rate updated
+    await exchangeRates
+      .connect(alice)
+      .updateRates(
+        [ethers.utils.formatBytes32String("sBTC")],
+        [expandTo18Decimals(10000)],
+        Math.floor(new Date(2020, 0, 1).getTime() / 1000)
+      );
+
+    const newRate = await exchangeRates.getRateAndTime(
+      ethers.utils.formatBytes32String("sBTC")
+    );
+    expect(newRate.rate).to.equal(expandTo18Decimals(10000));
+    expect(newRate.time).to.equal(
+      Math.floor(new Date(2020, 0, 1).getTime() / 1000)
+    );
+  });
+
+  it("stale rate update rejected", async () => {
+    // sBTC rate updated
+    await exchangeRates
+      .connect(alice)
+      .updateRates(
+        [ethers.utils.formatBytes32String("sBTC")],
+        [expandTo18Decimals(10000)],
+        Math.floor(new Date(2020, 0, 1).getTime() / 1000)
+      );
+
+    // Attemp to set rate at older time will fail
+    await expect(
+      exchangeRates
+        .connect(alice)
+        .updateRates(
+          [ethers.utils.formatBytes32String("sBTC")],
+          [expandTo18Decimals(10000)],
+          Math.floor(new Date(2020, 0, 1).getTime() / 1000) - 1
+        )
+    ).to.revertedWith("ExchangeRates: no update");
+  });
 });
