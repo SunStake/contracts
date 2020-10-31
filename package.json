@@ -20,6 +20,8 @@
     "clean": "rimraf ./build/",
     "prebuild": "yarn clean",
     "build": "waffle",
+    "prebuild-tron": "yarn clean",
+    "build-tron": "waffle waffle-tron.json",
     "pretest": "yarn build",
     "test": "mocha"
   }

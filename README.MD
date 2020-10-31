@@ -25,3 +25,20 @@ Then run:
     $ yarn build
 
 Built artifacts will be available in the `./build` directory.
+
+Note that you must have [Docker](https://www.docker.com/) installed for the build command to work.
+
+### Building for Tron
+
+The command above compiles the contracts for the Ethereum blockchain. Since [Waffle](https://getwaffle.io/) was built around Ethereum, building the contracts for Tron requires some local hacks.
+
+If this is the first time you compile this repository for Tron, run the following commands first:
+
+    $ docker pull sunstake/solc-tron:0.5.12
+    $ docker tag sunstake/solc-tron:0.5.12 ethereum/solc:0.5.12-tron
+
+This essentially tricks waffle into thinking the Tron Solidity compiler is a legit Ethereum compiler.
+
+Now you can run this:
+
+    $ yarn build-tron
