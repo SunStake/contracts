@@ -42,3 +42,9 @@ This essentially tricks waffle into thinking the Tron Solidity compiler is a leg
 Now you can run this:
 
     $ yarn build-tron
+
+### Known Issus with Node.js 14.x+
+
+A known [issue](https://github.com/trufflesuite/ganache-cli/issues/732) with the current version of `ganache-cli` used in this repository is causing `yarn test` to fail in `Node.js` versions `14.x` onwards. While the issue has been [fixed](https://github.com/trufflesuite/ganache-cli/releases/tag/v6.12.0), the version used here is an old one that still has the bug.
+
+Before the dependency is updated, you must use `Node.js` versions `12.x` or lower.
